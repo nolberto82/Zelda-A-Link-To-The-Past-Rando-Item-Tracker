@@ -267,7 +267,7 @@ draw_item_numbers_ow:
 		sta $0e
 		lda pointers_ow_01,x
 		sta $0c
-.loop	lda ($0c)
+.loop		lda ($0c)
 		cmp #$ffff
 		beq .next
 		jsr set_sprite_pos
@@ -317,7 +317,7 @@ draw_item_numbers_ow:
 		inc $0c
 		inc $0c
 		bra .loop2
-.last	lda $06
+.last		lda $06
 		bne +
 		stz $04
 		lda pointers_ow_03
@@ -440,7 +440,7 @@ special_items:
 		beq .bit00
 		bne .bit01
 		bra .no
-.yes	inc $08
+.yes		inc $08
 .no		rts	
 .bit00	sep #$20
 		inc $04
@@ -493,7 +493,7 @@ handle_same_room:
 		and #$01
 		beq .end
 ++		inc $08	
-.end	ply
+.end		ply
 		rts
 
 check_if_in_lw:
