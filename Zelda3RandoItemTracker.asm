@@ -317,7 +317,9 @@ draw_item_numbers_ow:
 		inc $0c
 		inc $0c
 		bra .loop2
-.last	stz $04
+.last	lda $06
+		bne +
+		stz $04
 		lda pointers_ow_03
 		sta $0c
 -		stz $08
