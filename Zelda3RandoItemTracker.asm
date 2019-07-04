@@ -1,10 +1,6 @@
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ; created by nolberto82 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
-
-header
-lorom
 
 ;light world = 96 items
 ;dark world  = 121 items
@@ -17,7 +13,7 @@ org $0ABCFD
 org $0AC554
 		dw $F0A9
 		
-;erase item totals from 3rd slo sram		
+;erase item totals from 3rd slot sram		
 org $0CD4D3		
 		autoclean jsl erasedata
 
@@ -74,13 +70,15 @@ itemtotal:
 		sta	$7ec7d4
 		tya
 		jsr hextodec
+		beq +
 		ora #$2490
 		sta	$7ec7d2
-		tya
++		tya
 		jsr hextodec
+		beq +
 		ora #$2490
 		sta	$7ec7d0	
-		sep #$30	
++		sep #$30	
 		plx
 		ply
 		pla
@@ -125,8 +123,7 @@ spritesize8x8:
 		sta $ad0
 		clc	
 		rtl
-
-		
+	
 ;Need this  to prevent crash in ice palace asar being stupid with this game
 org $A0F63C
 		db $ff
@@ -141,7 +138,14 @@ main:
 		pha
 		phy
 		phx
-		lda $11
+		lda $040c
+		cmp #$ff
+		beq +
+		lda $10
+		cmp #$07
+		bne +
+		jsr display_items_in_dungeon_rooms
++		lda $11
 		cmp #$07
 		bne ++
 		lda $710
@@ -166,12 +170,12 @@ main:
 		stz $12
 		phb							
 		phk							
-		plb							;push and pull bank
+		plb									;push and pull bank
 		jsr copy_sprite0
 		jsr check_if_in_lw
 		jsr draw_item_numbers_rooms
 		jsr draw_item_numbers_ow
-		plb							;restore bank
+		plb									;restore bank
 		sep #$10
 		ldx #$12
 -		pla
@@ -185,6 +189,37 @@ ret:	sep #$30
 		plp
 		lda $7ef443
 		rtl
+
+display_items_in_dungeon_rooms:
+		phb							
+		phk							
+		plb
+		rep #$30
+		lda #$0000
+		ldy #$0004
+		sep #$20
+		lda $00
+		pha			
+		stz $00
+-		lda $0403
+		and dungeon_chest_bits,y
+		beq +
+		inc $00
++		dey
+		bpl -
+		lda $0496
+		lsr	
+		sec
+		sbc $00
+		jsr hextodec2
+		rep #$20
+		ora #$2490
+		sta	$7ec814
+		sep #$30
+		pla
+		sta $00
+		plb
+		rts
 		
 draw_item_numbers_rooms:
 		rep #$30
@@ -267,7 +302,7 @@ draw_item_numbers_ow:
 		sta $0e
 		lda pointers_ow_01,x
 		sta $0c
-.loop		lda ($0c)
+.loop	lda ($0c)
 		cmp #$ffff
 		beq .next
 		jsr set_sprite_pos
@@ -317,7 +352,7 @@ draw_item_numbers_ow:
 		inc $0c
 		inc $0c
 		bra .loop2
-.last		lda $06
+.last	lda $06
 		bne +
 		stz $04
 		lda pointers_ow_03
@@ -440,7 +475,7 @@ special_items:
 		beq .bit00
 		bne .bit01
 		bra .no
-.yes		inc $08
+.yes	inc $08
 .no		rts	
 .bit00	sep #$20
 		inc $04
@@ -493,7 +528,7 @@ handle_same_room:
 		and #$01
 		beq .end
 ++		inc $08	
-.end		ply
+.end	ply
 		rts
 
 check_if_in_lw:
@@ -925,6 +960,9 @@ item_ow_data_02_dw:
 
 		;end of data
 		dw $ffff
+		
+dungeon_chest_bits:
+		db $01,$02,$04,$08,$10
 
 specialbits_lw:
 		db $01,$02,$04,$10,$80,$00,$01,$02,$10,$20,$80
