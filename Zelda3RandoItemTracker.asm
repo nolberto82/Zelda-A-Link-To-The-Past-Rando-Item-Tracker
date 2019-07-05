@@ -4,7 +4,7 @@
 
 ;light world = 96 items
 ;dark world  = 121 items
-	
+
 ;Overworld Map Zoomed Out
 org $0ABCFD
 		db $00
@@ -12,6 +12,20 @@ org $0ABCFD
 ;Overworld Map Crystals Numbers Disable
 org $0AC554
 		dw $F0A9
+		
+;Set to light world or dark world
+org $02818B
+		autoclean  jsl set_light_dark_world
+		nop
+
+freecode
+set_light_dark_world:
+		lda $0aa4
+		cmp #$01
+		beq +
+		lda #$0b
++		sta $0aa4
+		rtl
 		
 ;erase item totals from 3rd slot sram		
 org $0CD4D3		
@@ -40,12 +54,15 @@ itemincrease:					;Save item obtained based on entrance to 3rd slot save Ram
 		lda $1b
 		beq +					;If not in dungeon skip
 		rep #$30		
-		lda $a0
-		tax
+		ldx $a0
 		sep #$20
 		lda $700a00,x
 		inc
 		sta $700a00,x
+		ldx $040c
+		lda $700d00,x
+		inc
+		sta $700d00,x
 +		plp
 		ply
 		plx
@@ -62,28 +79,42 @@ itemtotal:
 		pha
 		phy
 		phx
+		rep #$30		
+		lda $00
+		pha
+		stz $00		
+		lda #$207f
+		sta $7ec7d4
+		sta $7ec7d2
+		sta $7ec7d0
 		sep #$30
-		ldx #$00
 		lda $7ef423
+		sta $00
 		jsr hextodec
 		ora #$2490
-		sta	$7ec7d4
+		sta	$7ec7d6
 		tya
 		jsr hextodec
-		beq +
+		ldx $00
+		cpx #$000a
+		bmi +
 		ora #$2490
-		sta	$7ec7d2
+		sta	$7ec7d4
 +		tya
 		jsr hextodec
-		beq +
+		ldx $00
+		cpx #$0064
+		bmi +
 		ora #$2490
-		sta	$7ec7d0	
-+		sep #$30	
+		sta	$7ec7d2	
++		pla
+		sta $00			
+		sep #$30	
 		plx
 		ply
 		pla
 		plp
-		lda $a23,x
+		lda $0a23,x
 		asl
 		rtl		
 
@@ -138,13 +169,16 @@ main:
 		pha
 		phy
 		phx
-		lda $040c
-		cmp #$ff
-		beq +
+		rep #$30
+		lda $06
+		pha
+		stz $06
+		sep #$30
+		jsr check_if_in_lw
 		lda $10
 		cmp #$07
 		bne +
-		jsr display_items_in_dungeon_rooms
+		jsr display_items_in_rooms
 +		lda $11
 		cmp #$07
 		bne ++
@@ -164,7 +198,6 @@ main:
 		stz $00
 		stz $02
 		stz $04	
-		stz $06
 		stz $08
 		stz $0c
 		stz $12
@@ -172,7 +205,6 @@ main:
 		phk							
 		plb									;push and pull bank
 		jsr copy_sprite0
-		jsr check_if_in_lw
 		jsr draw_item_numbers_rooms
 		jsr draw_item_numbers_ow
 		plb									;restore bank
@@ -182,7 +214,10 @@ main:
 		sta $00,x
 		dex #2
 		bpl -
-ret:	sep #$30		
+ret:	rep #$30
+		pla		
+		sta $06		
+		sep #$30
 		plx
 		ply
 		pla
@@ -190,45 +225,47 @@ ret:	sep #$30
 		lda $7ef443
 		rtl
 
-display_items_in_dungeon_rooms:
+display_items_in_rooms:
 		phb							
 		phk							
 		plb
 		rep #$30
 		lda #$0000
-		ldy #$0004
-		sep #$20
 		lda $00
-		pha			
-		stz $00
--		lda $0403
-		and dungeon_chest_bits,y
-		beq +
-		inc $00
-+		dey
-		bpl -
-		lda $0496
-		lsr	
+		pha	
+		stz $02
+		ldx $040c		
+		lda dungeon_item_totals,x	
 		sec
-		sbc $00
+		sbc $700d00,x
+		sta $00
 		jsr hextodec2
 		rep #$20
 		ora #$2490
-		sta	$7ec814
+		sta	$7ec816
+		tya
+		jsr hextodec2
+		rep #$20
+		ldx $00
+		cpx #$000a
+		bmi +
+		ora #$2490
+		sta	$7ec814	
++		pla
+		sta $00		
 		sep #$30
-		pla
-		sta $00
 		plb
 		rts
 		
 draw_item_numbers_rooms:
 		rep #$30
 		ldx #$0000
+		lda #$0000
 		stz $0a
 		stz $0e
 		lda $06
 		asl	
-		tax
+		tax		
 		lda pointers_room,x		;load room item pointers based if light or dark world 
 		sta $0c
 .loop	lda ($0c)
@@ -961,6 +998,22 @@ item_ow_data_02_dw:
 		;end of data
 		dw $ffff
 		
+dungeon_item_totals:
+		dw $0002 ;Sewer Passage
+		dw $0007 ;Hyrule Castle
+		dw $0006 ;Eastern Palace
+		dw $0006 ;Desert Palace
+		dw $0002 ;Hyrule Castle 2
+		dw $000a ;Swamp Palace
+		dw $000e ;Dark Palace
+		dw $0008 ;Misery Mire
+		dw $0008 ;Skull Woods
+		dw $0008 ;Ice Palace
+		dw $0005 ;Tower of Hera
+		dw $0008 ;Thieves Dungeon
+		dw $000c ;Turtle Rock
+		dw $001b ;Ganon's Tower
+		
 dungeon_chest_bits:
 		db $01,$02,$04,$08,$10
 
@@ -983,3 +1036,4 @@ digits:
 spritenumber0graphic:
 		db $3c,$00,$7e,$00,$ff,$00,$ff,$00,$ff,$00,$ff,$00,$7e,$00,$3c,$00
 		db $c3,$3c,$bd,$7e,$66,$ff,$66,$ff,$66,$ff,$66,$ff,$bd,$7e,$c3,$3c
+		
