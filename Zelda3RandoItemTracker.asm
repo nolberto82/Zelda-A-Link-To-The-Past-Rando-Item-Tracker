@@ -234,7 +234,9 @@ display_items_in_rooms:
 		lda $00
 		pha	
 		stz $02
-		ldx $040c		
+		ldx $040c
+		cpx #$00ff
+		beq +
 		lda dungeon_item_totals,x	
 		sec
 		sbc $700d00,x
@@ -1036,4 +1038,3 @@ digits:
 spritenumber0graphic:
 		db $3c,$00,$7e,$00,$ff,$00,$ff,$00,$ff,$00,$ff,$00,$7e,$00,$3c,$00
 		db $c3,$3c,$bd,$7e,$66,$ff,$66,$ff,$66,$ff,$66,$ff,$bd,$7e,$c3,$3c
-		
