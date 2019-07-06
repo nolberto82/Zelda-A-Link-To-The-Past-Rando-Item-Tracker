@@ -1020,7 +1020,7 @@ dungeon_item_totals:
 		dw $0008 ;Misery Mire
 		dw $0008 ;Skull Woods
 		dw $0008 ;Ice Palace
-		dw $0005 ;Tower of Hera
+		dw $0006 ;Tower of Hera
 		dw $0008 ;Thieves Dungeon
 		dw $000c ;Turtle Rock
 		dw $001b ;Ganon's Tower
