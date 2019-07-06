@@ -234,9 +234,12 @@ display_items_in_rooms:
 		lda $00
 		pha	
 		stz $02
+		ldx $a0
+		cpx #$0012
+		beq +
 		ldx $040c
 		cpx #$00ff
-		beq +
+		beq +			
 		lda dungeon_item_totals,x	
 		sec
 		sbc $700d00,x
@@ -1001,8 +1004,8 @@ item_ow_data_02_dw:
 		dw $ffff
 		
 dungeon_item_totals:
-		dw $0002 ;Sewer Passage
-		dw $0007 ;Hyrule Castle
+		dw $0004 ;Sewer Passage
+		dw $0003 ;Hyrule Castle
 		dw $0006 ;Eastern Palace
 		dw $0006 ;Desert Palace
 		dw $0002 ;Hyrule Castle 2
