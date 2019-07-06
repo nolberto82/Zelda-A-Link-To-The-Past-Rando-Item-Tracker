@@ -60,6 +60,8 @@ itemincrease:					;Save item obtained based on entrance to 3rd slot save Ram
 		inc
 		sta $700a00,x
 		ldx $040c
+		cpx #$00ff
+		beq +
 		lda $700d00,x
 		inc
 		sta $700d00,x
@@ -234,6 +236,9 @@ display_items_in_rooms:
 		lda $00
 		pha	
 		stz $02
+		lda #$207f
+		sta $7ec816		
+		sta $7ec814
 		ldx $a0
 		cpx #$0012
 		beq +
@@ -243,6 +248,7 @@ display_items_in_rooms:
 		lda dungeon_item_totals,x	
 		sec
 		sbc $700d00,x
+		beq +
 		sta $00
 		jsr hextodec2
 		rep #$20
