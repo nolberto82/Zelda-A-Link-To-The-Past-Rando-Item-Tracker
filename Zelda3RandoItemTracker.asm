@@ -2,7 +2,7 @@
 ; created by nolberto82 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;light world = 96 items
+;light world = 95 items
 ;dark world  = 121 items
 
 ;Overworld Map Zoomed Out
