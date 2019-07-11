@@ -722,9 +722,9 @@ item_rooms_data_lw:
 		dw $0005,$0000
 
 		;treasure game lost woods - entrance 3c
-		dw $0100,$0000
-		dw $400f		
-		dw $0001,$0000
+		;dw $0100,$0000
+		;dw $400f		
+		;dw $0001,$0000
 
 		;tavern kakariko village - entrance 42
 		dw $0103,$0000
