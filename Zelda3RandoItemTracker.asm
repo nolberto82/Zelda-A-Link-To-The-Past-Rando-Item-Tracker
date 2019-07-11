@@ -782,9 +782,9 @@ item_rooms_data_lw:
 		dw $0005,$0000
 		
 		;treasure game south of kakariko village - entrance 67
-		dw $0118,$0000
-		dw $3b7d		
-		dw $0001,$0000
+		;dw $0118,$0000
+		;dw $3b7d		
+		;dw $0001,$0000
 		
 		;cave west of lake hylia - entrance 6c
 		dw $0123,$0000
