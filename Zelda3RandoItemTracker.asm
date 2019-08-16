@@ -2,7 +2,7 @@
 ; created by nolberto82 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;light world = 95 items
+;light world = 96 items
 ;dark world  = 121 items
 
 ;Overworld Map Zoomed Out
@@ -785,7 +785,7 @@ item_rooms_data_lw:
 		dw $0121,$0000
 		dw $505e		
 		dw $0001,$0000
-		
+			
 		;cave west of lake hylia - entrance 6c
 		dw $0123,$0000
 		dw $9aae		
