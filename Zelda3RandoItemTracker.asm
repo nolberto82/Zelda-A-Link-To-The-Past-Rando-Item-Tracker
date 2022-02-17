@@ -162,7 +162,8 @@ org $A0F63C
 		db $ff
 		
 ;Map Chest Counter
-org $A18006
+;org $A1800E
+org $0ABF86
 		jsl main	
 
 org $A1E000
@@ -224,7 +225,8 @@ ret:	rep #$30
 		ply
 		pla
 		plp
-		lda $7ef443
+		sbc #$04
+		sta $0e
 		rtl
 
 display_items_in_rooms:
