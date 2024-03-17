@@ -157,7 +157,7 @@ spritesize8x8:
 		clc	
 		rtl
 	
-;Need this  to prevent crash in ice palace asar being stupid with this game
+;Need this  to prevent crash in ice palace
 org $A0F63C
 		db $ff
 		
@@ -220,7 +220,7 @@ main:
 ret:	rep #$30
 		pla		
 		sta $06		
-		sep #$30
+		sep #$20
 		plx
 		ply
 		pla
